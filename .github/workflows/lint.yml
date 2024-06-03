@@ -1,0 +1,53 @@
+name: Lint
+
+on:
+  push:
+    tags:
+      - v*
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  golangci-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install Go
+        uses: actions/setup-go@v4
+        with:
+          cache: true
+          go-version: '1.21'
+          check-latest: true
+
+      - name: Lint
+        uses: golangci/golangci-lint-action@v3.4.0
+        with:
+          version: 'v1.59.0'
+          args: --timeout 5m
+
+  check-mod:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install Go
+        uses: actions/setup-go@v4
+        with:
+          cache: true
+          go-version: '1.21'
+          check-latest: true
+
+      - name: Download dependencies
+        run: go mod download && go mod tidy
+
+      - name: Go generate
+        run: go generate ./...
+
+      - name: Check git diff
+        run: git diff --exit-code
