@@ -12,7 +12,7 @@ func zero() int {
 }
 
 func main() {
-    if o := zero(); o > 0 { // Why to use z here? 
+    if o := zero(); o > 0 { // Why to use o here? 
         println("o is greater than 0")
     }
 }
