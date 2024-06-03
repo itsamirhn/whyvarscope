@@ -1,0 +1,70 @@
+name: Lint
+
+on:
+  push:
+    tags:
+      - v*
+    branches:
+      - master
+  pull_request:
+  workflow_dispatch:
+  workflow_call:
+    inputs:
+      go:
+        description: 'Go version'
+        default: ">=1.21"
+        required: false
+        type: string
+      golangci-lint-version:
+        description: 'golangci-lint version'
+        default: "latest"
+        required: false
+        type: string
+      timeout:
+        description: 'golangci-lint timeout'
+        default: "30m"
+        required: false
+        type: string
+
+jobs:
+  golangci-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install Go
+        uses: actions/setup-go@v4
+        with:
+          cache: true
+          go-version: ${{ inputs.go }}
+          check-latest: true
+
+      - name: Lint
+        uses: golangci/golangci-lint-action@v3.4.0
+        with:
+          version: ${{ inputs.golangci-lint-version }}
+          args: --timeout ${{ inputs.timeout }}
+
+  # Check if there are any dirty changes after go mod tidy
+  check-mod:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install Go
+        uses: actions/setup-go@v4
+        with:
+          cache: true
+          go-version: ${{ inputs.go }}
+          check-latest: true
+
+      - name: Download dependencies
+        run: go mod download && go mod tidy
+
+      - name: Go generate
+        run: go generate ./...
+
+      - name: Check git diff
+        run: git diff --exit-code
