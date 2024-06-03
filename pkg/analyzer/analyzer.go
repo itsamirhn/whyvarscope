@@ -40,7 +40,7 @@ func run(pass *analysis.Pass) (interface{}, error) {
 			return
 		}
 
-		for i := range len(assignStatement.Lhs) {
+		for i := 0; i < len(assignStatement.Lhs); i++ {
 			v := assignStatement.Lhs[i]
 			vIdent, ok := v.(*ast.Ident)
 			if !ok {
@@ -54,7 +54,6 @@ func run(pass *analysis.Pass) (interface{}, error) {
 			}
 			pass.Reportf(vIdent.Pos(), "variable %s can be removed and use assignee directly", vIdent.Name)
 		}
-		return
 	})
 	return nil, nil
 }
