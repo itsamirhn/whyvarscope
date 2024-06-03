@@ -1,4 +1,6 @@
-# WhyVarScope
+# WhyVarScope 
+![coverage](https://github.com/itsamirhn/whyvarscope/actions/workflows/coverage.yml/badge.svg)
+![lint](https://github.com/itsamirhn/whyvarscope/actions/workflows/lint.yml/badge.svg)
 
 A go linter to check if you can avoid using variable scope inside if statements.
 
